@@ -26,3 +26,7 @@ output "eks_cluster_ca" {
   value     = module.eks.cluster_ca
   sensitive = true
 }
+
+output "eks_fargate_profile_arns" {
+  value = module.eks.fargate_profile_arns
+}

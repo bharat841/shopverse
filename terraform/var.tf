@@ -27,32 +27,22 @@ variable "environment" {
 }
 
 variable "single_nat_gateway" {
-  type    = bool
-  default = true
+  type = bool
+}
+
+variable "enable_vpn_gateway" {
+  type = bool
+}
+
+variable "tags" {
+  type = map(string)
 }
 
 # ---------- EKS specific ----------
 variable "eks_version" {
-  type    = string
-  default = "1.30"
+  type = string
 }
 
-variable "node_instance_types" {
-  type    = list(string)
-  default = ["t3.medium"]
-}
-
-variable "node_desired_size" {
-  type    = number
-  default = 2
-}
-
-variable "node_min_size" {
-  type    = number
-  default = 1
-}
-
-variable "node_max_size" {
-  type    = number
-  default = 3
+variable "fargate_namespaces" {
+  type = list(string)
 }

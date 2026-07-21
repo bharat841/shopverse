@@ -19,6 +19,17 @@ private_subnet_cidrs = [
   "10.0.13.0/24"
 ]
 
-cluster_name      = "shopverse-eks"
-environment       = "uat"
+cluster_name       = "shopverse-eks"
+environment        = "uat"
 single_nat_gateway = true
+enable_vpn_gateway = true
+
+tags = {
+  Terraform   = "true"
+  Environment = "uat"
+}
+
+# ---------- EKS ----------
+eks_version = "1.30"
+
+fargate_namespaces = ["default", "kube-system"]

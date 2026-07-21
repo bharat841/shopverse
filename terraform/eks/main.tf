@@ -36,57 +36,46 @@ resource "aws_eks_cluster" "this" {
   }
 }
 
-# ---------- Node Group IAM Role ----------
-resource "aws_iam_role" "node" {
-  name = "${var.environment}-${var.cluster_name}-node-role"
+# ---------- Fargate Pod Execution IAM Role ----------
+resource "aws_iam_role" "fargate" {
+  name = "${var.environment}-${var.cluster_name}-fargate-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
-      Principal = { Service = "ec2.amazonaws.com" }
+      Principal = { Service = "eks-fargate-pods.amazonaws.com" }
       Action    = "sts:AssumeRole"
+      Condition = {
+        ArnLike = {
+          "aws:SourceArn" = aws_eks_cluster.this.arn
+        }
+      }
     }]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "node_worker" {
-  role       = aws_iam_role.node.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+resource "aws_iam_role_policy_attachment" "fargate_policy" {
+  role       = aws_iam_role.fargate.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "node_cni" {
-  role       = aws_iam_role.node.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-}
+# ---------- Fargate Profiles (one per namespace, private subnets only) ----------
+resource "aws_eks_fargate_profile" "this" {
+  for_each = toset(var.fargate_namespaces)
 
-resource "aws_iam_role_policy_attachment" "node_ecr" {
-  role       = aws_iam_role.node.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
+  cluster_name            = aws_eks_cluster.this.name
+  fargate_profile_name    = "${var.environment}-${var.cluster_name}-${each.value}"
+  pod_execution_role_arn  = aws_iam_role.fargate.arn
+  subnet_ids              = var.private_subnet_ids
 
-# ---------- Managed Node Group (worker nodes go in private subnets) ----------
-resource "aws_eks_node_group" "this" {
-  cluster_name    = aws_eks_cluster.this.name
-  node_group_name = "${var.environment}-${var.cluster_name}-ng"
-  node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = var.private_subnet_ids
-
-  instance_types = var.node_instance_types
-
-  scaling_config {
-    desired_size = var.node_desired_size
-    min_size     = var.node_min_size
-    max_size     = var.node_max_size
+  selector {
+    namespace = each.value
   }
 
-  depends_on = [
-    aws_iam_role_policy_attachment.node_worker,
-    aws_iam_role_policy_attachment.node_cni,
-    aws_iam_role_policy_attachment.node_ecr,
-  ]
+  depends_on = [aws_iam_role_policy_attachment.fargate_policy]
 
   tags = {
-    Name = "${var.environment}-${var.cluster_name}-ng"
+    Name = "${var.environment}-${var.cluster_name}-${each.value}-fargate"
   }
 }

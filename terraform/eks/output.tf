@@ -14,6 +14,10 @@ output "cluster_ca" {
   value = aws_eks_cluster.this.certificate_authority[0].data
 }
 
-output "node_group_arn" {
-  value = aws_eks_node_group.this.arn
+output "fargate_profile_arns" {
+  value = { for ns, profile in aws_eks_fargate_profile.this : ns => profile.arn }
+}
+
+output "fargate_execution_role_arn" {
+  value = aws_iam_role.fargate.arn
 }

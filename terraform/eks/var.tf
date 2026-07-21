@@ -22,18 +22,8 @@ variable "public_subnet_ids" {
   type = list(string)
 }
 
-variable "node_instance_types" {
-  type = list(string)
-}
-
-variable "node_desired_size" {
-  type = number
-}
-
-variable "node_min_size" {
-  type = number
-}
-
-variable "node_max_size" {
-  type = number
+variable "fargate_namespaces" {
+  type        = list(string)
+  description = "Kubernetes namespaces that should run on Fargate (each gets its own profile)"
+  default     = ["default", "kube-system"]
 }
