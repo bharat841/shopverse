@@ -46,11 +46,6 @@ resource "aws_iam_role" "fargate" {
       Effect    = "Allow"
       Principal = { Service = "eks-fargate-pods.amazonaws.com" }
       Action    = "sts:AssumeRole"
-      Condition = {
-        ArnLike = {
-          "aws:SourceArn" = aws_eks_cluster.this.arn
-        }
-      }
     }]
   })
 }
