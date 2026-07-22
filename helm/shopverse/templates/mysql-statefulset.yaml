@@ -1,31 +1,50 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "mychart.fullname" . }}
+  name: {{ include "shopverse.fullname" . }}-mysql
   labels:
-    {{- include "mychart.labels" . | nindent 4 }}
+    {{- include "shopverse.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "mychart.fullname" . }}-headless
+  serviceName: {{ include "shopverse.fullname" . }}-headless
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "mychart.selectorLabels" . | nindent 6 }}
+      {{- include "shopverse.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mysql
   template:
     metadata:
       labels:
-        {{- include "mychart.selectorLabels" . | nindent 8 }}
+        {{- include "shopverse.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mysql
     spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                key: mysql_root_pass
+            - name: MYSQL_DB
+              valueFrom:
+                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                key: mysql_database
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                key: mysql_user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                key: mysql_pass
           ports:
-            - name: http
-              containerPort: 8080
+            - name: mysql
+              containerPort: 3306
               protocol: TCP
           volumeMounts:
             - name: data
-              mountPath: /var/lib/data
+              mountPath: /var/lib/mysql
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -35,3 +54,5 @@ spec:
         resources:
           requests:
             storage: {{ .Values.storage.size | quote }}
+
+  
