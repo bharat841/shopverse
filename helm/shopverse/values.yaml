@@ -159,3 +159,14 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+MYSQL_ROOT_PASSWORD: rootpassword
+MYSQL_DATABASE: shopverse
+MYSQL_USER: shopverse
+MYSQL_PASSWORD: shopverse123
+DB_HOST: mysql
+DB_PORT: "3306"
+DB_NAME: shopverse
+DB_USER: shopverse
+DB_PASSWORD: shopverse123
+JWT_SECRET: local-dev-jwt-secret-key
