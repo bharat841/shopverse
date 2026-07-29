@@ -20,7 +20,7 @@ spec:
       {{- end }}
       labels:
         {{- include "shopverse.labels" . | nindent 8 }}
-        pp.kubernetes.io/component: backend
+        app.kubernetes.io/component: backend
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
