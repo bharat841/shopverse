@@ -18,6 +18,12 @@ backend:
     tag: "latest"
     pullPolicy: IfNotPresent
 
+frontend:
+  image:
+    repository: 631152903148.dkr.ecr.us-east-1.amazonaws.com/shopverse-frontned
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
