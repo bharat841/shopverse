@@ -25,18 +25,22 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                name: {{ include "shopverse.fullname" . }}-secrets
                 key: mysql_root_pass
             - name: MYSQL_DB
               valueFrom:
                 secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                name: {{ include "shopverse.fullname" . }}-secrets
                 key: mysql_database
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                name: {{ include "shopverse.fullname" . }}-secrets
                 key: mysql_user
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                name: {{ include "shopverse.fullname" . }}-secrets
                 key: mysql_pass
           ports:
             - name: mysql
