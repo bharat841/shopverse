@@ -11,52 +11,60 @@ spec:
     matchLabels:
       {{- include "shopverse.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: mysql
+
   template:
     metadata:
       labels:
         {{- include "shopverse.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: mysql
+
     spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
+
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
-                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: mysql_root_pass
-            - name: MYSQL_DB
+
+            - name: MYSQL_DATABASE
               valueFrom:
-                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: mysql_database
+
             - name: MYSQL_USER
               valueFrom:
-                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: mysql_user
+
             - name: MYSQL_PASSWORD
               valueFrom:
-                secretKeyRef: {{ include "shopverse.fullname" . }}-secrets
+                secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: mysql_pass
+
           ports:
             - name: mysql
               containerPort: 3306
               protocol: TCP
+
           volumeMounts:
             - name: data
               mountPath: /var/lib/mysql
+
   volumeClaimTemplates:
     - metadata:
         name: data
       spec:
-        accessModes: [ "ReadWriteOnce" ]
+        accessModes:
+          - ReadWriteOnce
         storageClassName: {{ .Values.storage.className | quote }}
         resources:
           requests:
             storage: {{ .Values.storage.size | quote }}
-
-  
