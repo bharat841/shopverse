@@ -1,15 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "shopverse.fullname" . }}
+  name: {{ include "shopverse.fullname" . }}-backend
   labels:
     {{- include "shopverse.labels" . | nindent 4 }}
+
 spec:
   type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+
   selector:
     {{- include "shopverse.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+
+  ports:
+    - name: http
+      port: {{ .Values.backend.port }}
+      targetPort: {{ .Values.backend.targetPort }}
+      protocol: TCP

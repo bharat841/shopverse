@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .Release.Namespace | quote }}
+  name: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     environment: {{ .Values.env | default "production" | quote }}
