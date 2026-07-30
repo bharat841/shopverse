@@ -17,5 +17,4 @@ spec:
       port: {{ .Values.frontend.port }}
       targetPort: {{ .Values.frontend.targetPort }}
       protocol: TCP
-  selector:
-    {{- include "shopverse.selectorLabels" . | nindent 4 }}
+
