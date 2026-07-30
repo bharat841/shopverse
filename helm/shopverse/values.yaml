@@ -17,16 +17,16 @@ backend:
     repository: 631152903148.dkr.ecr.us-east-1.amazonaws.com/shopverse-backend
     tag: "latest"
     pullPolicy: IfNotPresent
-    port: 80
-    targetPort: 8080
+  port: 80
+  targetPort: 8080
 
 frontend:
   image:
     repository: 631152903148.dkr.ecr.us-east-1.amazonaws.com/shopverse-frontned
     tag: "latest"
     pullPolicy: IfNotPresent
-    port: 80
-    targetPort: 80
+  port: 80
+  targetPort: 80
 
 namespace: "3-tier"
 
