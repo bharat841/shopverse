@@ -4,17 +4,12 @@ metadata:
   name: {{ include "shopverse.fullname" . }}-backend
   labels:
     {{- include "shopverse.labels" . | nindent 4 }}
-
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
-
   selector:
     matchLabels:
       {{- include "shopverse.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: backend
-
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -27,90 +22,78 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
-
           env:
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: db_host
-
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: db_port
-
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: db_name
-
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: db_user
-
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: db_pass
-
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ include "shopverse.fullname" . }}-secrets
                   key: jwt_secret
-
           ports:
             - name: http
               containerPort: {{ .Values.backend.targetPort }}
               protocol: TCP
-
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
           {{- with .Values.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
