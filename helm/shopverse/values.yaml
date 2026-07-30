@@ -16,18 +16,28 @@ backend:
   image:
     repository: 631152903148.dkr.ecr.us-east-1.amazonaws.com/shopverse-backend
     tag: "latest"
+    pullPolicy: IfNotPresent
     port: 80
     targetPort: 8080
-    pullPolicy: IfNotPresent
 
 frontend:
   image:
     repository: 631152903148.dkr.ecr.us-east-1.amazonaws.com/shopverse-frontned
     tag: "latest"
     pullPolicy: IfNotPresent
-
+    port: 80
+    targetPort: 80
 
 namespace: "3-tier"
+
+service:
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port: 80
+
+
+
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
@@ -65,11 +75,6 @@ securityContext: {}
   # runAsUser: 1000
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
-service:
-  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-  type: ClusterIP
-  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 80
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
