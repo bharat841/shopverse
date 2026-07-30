@@ -30,19 +30,15 @@ frontend:
 
 namespace: "3-tier"
 
-service:
-  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+service: 
   type: ClusterIP
-  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 80
 
+imagePullSecrets:
+  - name: ecr-registry-secret
 
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: []
-# This is to override the chart name.
-nameOverride: ""
-fullnameOverride: ""
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -192,5 +188,5 @@ DB_PASSWORD: shopverse123
 JWT_SECRET: local-dev-jwt-secret-key
 
 storage:
-  className: gp2
+  className: standard
   size: 5Gi
